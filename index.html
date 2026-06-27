@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockCraft</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game"></div>
+
+    <div id="hud" class="hud">
+        <div class="crosshair" aria-hidden="true">+</div>
+        <div id="hotbar" class="hotbar"></div>
+        <div class="hint">WASD move | Mouse look | Left break | Right place | E inventory | 1-9 blocks</div>
+    </div>
+
+    <div id="inventory" class="inventory hidden">
+        <div class="inventory-panel">
+            <h2>Inventory</h2>
+            <p>Select a block to build with.</p>
+            <div id="inventory-grid" class="inventory-grid"></div>
+            <button id="close-inventory" type="button">Close (E)</button>
+        </div>
+    </div>
+
+    <div id="menu" class="menu">
+        <h1>BlockCraft</h1>
+        <p id="menu-status">A first-person sandbox world with sound effects.</p>
+        <button id="play-btn" type="button">Start Game</button>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

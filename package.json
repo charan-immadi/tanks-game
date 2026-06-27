@@ -1,0 +1,11 @@
+{
+  "name": "tank-warfare-lan",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node lan-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
