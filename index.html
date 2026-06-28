@@ -333,7 +333,7 @@ addEventListener('mousemove',e=>{mouse.x=(e.clientX/innerWidth)*2-1;mouse.y=-(e.
 addEventListener('mousedown',e=>{if(e.button===0&&state==='playing'){actx.resume().catch(()=>{});shootQ=true;}});
 addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' '&&state==='playing'){e.preventDefault();actx.resume().catch(()=>{});shootQ=true;}});
 addEventListener('keyup',e=>{keys[e.key]=false;});
-document.getElementById('sBtn').addEventListener('click',async()=>{actx.resume().catch(()=>{});const modeToStart=selectedMode;if(modeToStart==='lan'){try{await connectLAN();}catch{netSetInfo('LAN: failed to connect. Start with node lan-server.js');return;}if(!netSeat){netSetInfo('LAN: waiting for server seat...');return;}}initGame(modeToStart);});
+document.getElementById('sBtn').addEventListener('click',async()=>{actx.resume().catch(()=>{});const modeToStart=selectedMode;if(modeToStart==='lan'){try{await connectLAN();}catch{netSetInfo('LAN: failed to connect. Start with node server.js');return;}if(!netSeat){netSetInfo('LAN: waiting for server seat...');return;}}initGame(modeToStart);});
 document.getElementById('rBtn').addEventListener('click',()=>{actx.resume().catch(()=>{});initGame(lastStartedMode);});
 modeBtns.forEach(b=>b.addEventListener('click',()=>{selectedMode=b.dataset.mode||'1v1';modeBtns.forEach(x=>x.classList.toggle('active',x===b));modeDescEl.textContent=modeText[selectedMode]||modeText['1v1'];if(selectedMode!=='lan'){netSetInfo('');netClose();}else{netSetInfo('LAN: press START BATTLE on both devices.');}}));
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});

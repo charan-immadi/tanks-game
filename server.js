@@ -20,7 +20,7 @@ const MIME = {
 
 function safePath(urlPath) {
   const clean = decodeURIComponent(urlPath.split('?')[0]);
-  const rel = clean === '/' ? '/tanks.html' : clean;
+  const rel = clean === '/' ? '/index.html' : clean;
   const abs = path.join(ROOT, rel);
   if (!abs.startsWith(ROOT)) return null;
   return abs;
@@ -120,6 +120,6 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(PORT, () => {
-  console.log('LAN server running on http://0.0.0.0:' + PORT);
-  console.log('Open /tanks.html on both devices in same network.');
+  console.log('LAN server running on http://localhost:' + PORT);
+  console.log('Open / on both devices in same network.');
 });
