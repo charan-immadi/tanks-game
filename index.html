@@ -31,6 +31,14 @@
 .inv-key{font-size:10px;opacity:.88}
 .inv-name{font-size:11px;font-weight:700;letter-spacing:.04em;color:#dfeccf}
 .inv-tip{margin-top:6px;text-align:center;font-size:10px;color:#97b07f;letter-spacing:.06em}
+#chat-w{position:absolute;right:20px;top:92px;width:250px;background:rgba(0,8,0,.78);border:1px solid #3a6030;border-radius:8px;padding:8px;pointer-events:auto;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+#chat-log{height:110px;overflow:hidden;display:flex;flex-direction:column;gap:4px;margin-bottom:6px;font-size:10px;line-height:1.25;color:#d9ebc6}
+.chat-msg{padding:4px 6px;border-radius:5px;background:rgba(255,255,255,.04)}
+.chat-meta{color:#88b068;margin-right:6px}
+#chat-row{display:flex;gap:6px}
+#chat-in{flex:1;min-width:0;background:#152015;color:#e8f4db;border:1px solid #45623a;border-radius:6px;padding:6px 8px;font-family:inherit;font-size:11px}
+#chat-send{border:1px solid #7e9d63;background:linear-gradient(180deg,#26361d,#15200f);color:#d7efba;border-radius:6px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+#chat-send:active{transform:translateY(1px)}
 @media (max-width:900px){#inv-w{min-width:330px;bottom:88px}.inv-slot{width:58px;height:56px}.inv-name{font-size:9px}}
 #kl-w{position:absolute;right:20px;top:20px;background:rgba(0,8,0,.78);border:1px solid #3a6030;border-radius:6px;padding:10px 18px;text-align:center}
 #kl-l{font-size:10px;letter-spacing:.15em;color:#88b068}#kl-v{font-size:28px;font-weight:bold;color:#f0c040;line-height:1.2}#kl-r{font-size:10px;color:#88b068;margin-top:2px}
@@ -41,6 +49,11 @@
 #hit::before{transform:translate(-50%,-50%) rotate(45deg)}
 #hit::after{transform:translate(-50%,-50%) rotate(-45deg)}
 #hit.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#airAim{position:absolute;left:50%;top:50%;width:72px;height:72px;transform:translate(-50%,-50%);opacity:0;pointer-events:none;border:1px solid rgba(120,220,255,.7);border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 0 18px rgba(120,220,255,.16)}
+#airAim::before,#airAim::after{content:"";position:absolute;left:50%;top:50%;background:rgba(120,220,255,.9)}
+#airAim::before{width:2px;height:28px;transform:translate(-50%,-50%)}
+#airAim::after{width:28px;height:2px;transform:translate(-50%,-50%)}
+#airAim.on{opacity:1}
 .menu{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:radial-gradient(ellipse at 50% 40%,rgba(25,45,15,.88) 0%,rgba(4,7,3,.97) 70%)}
 .menu h1{font-size:clamp(2.5rem,7vw,5.5rem);letter-spacing:.22em;color:#f0c040;text-shadow:0 0 30px rgba(240,192,64,.55),0 5px 0 rgba(0,0,0,.7);text-align:center}
 .sub{color:#88a870;font-size:1rem}.cbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:14px 28px}
@@ -51,6 +64,9 @@
 .mapPick{display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.25);border:1px solid rgba(180,210,140,.35);padding:8px 12px;border-radius:8px}
 .mapPick label{font-size:.75rem;color:#9fc086;letter-spacing:.1em}
 #mapSel{font-family:inherit;background:#1a2517;color:#d9ebc6;border:1px solid #4e6f40;border-radius:6px;padding:7px 10px;min-width:220px}
+#upgBtns{display:flex;gap:8px;flex-wrap:wrap}
+.upgBtn{padding:8px 12px;border:1px solid #5f7e52;background:rgba(17,28,12,.82);color:#d8e8c4;border-radius:6px;cursor:pointer;font-weight:700;letter-spacing:.06em;font-size:.75rem}
+.upgBtn.on{border-color:#f0c040;color:#f0c040;box-shadow:0 0 0 1px rgba(240,192,64,.35) inset}
 #modeDesc{font-size:.85rem;color:#95b97b;min-height:18px}
 #lanInfo{font-size:.78rem;color:#9dc38b;min-height:16px}
 .btn{padding:14px 44px;font-size:15px;font-family:inherit;font-weight:bold;letter-spacing:.18em;border:2px solid #f0c040;background:linear-gradient(180deg,#5a3c08,#2a1c04);color:#f0c040;cursor:pointer;border-radius:4px;box-shadow:0 6px 0 rgba(0,0,0,.55)}
@@ -70,7 +86,8 @@
 .actBtns .use{grid-column:2;grid-row:2}
 .actBtns .veh1{grid-column:1;grid-row:3}
 .actBtns .veh2{grid-column:2;grid-row:3}
-.actBtns .cam{grid-column:1/3;grid-row:4;background:rgba(32,58,88,.72);border-color:rgba(120,180,235,.8)}
+.actBtns .land{grid-column:1;grid-row:4;background:rgba(44,72,42,.72);border-color:rgba(126,165,110,.85)}
+.actBtns .cam{grid-column:2;grid-row:4;background:rgba(32,58,88,.72);border-color:rgba(120,180,235,.8)}
 @media (max-width:900px),(pointer:coarse){#ch{display:none}.mobileCtl.show{display:flex}}
 </style>
 </head>
@@ -80,13 +97,21 @@
   <div id="ch"></div>
   <div id="obj">OBJECTIVE: ELIMINATE ENEMIES</div>
   <div id="hit"></div>
+  <div id="airAim"></div>
   <div id="hp-w"><div id="hp-l"><span>HULL</span><span id="hp-t">100/100</span></div><div id="hp-bg"><div id="hp-f"></div></div></div>
   <div id="am-w"><div id="am-l">CANNON</div><div id="rl-bg"><div id="rl-f"></div></div><div id="rl-t">READY</div></div>
   <div id="spd-w"><span>SPEED</span><div id="spd-v">0 km/h</div></div>
   <div id="md-w">MODE: <span id="md-v">1V1</span><br>CAM: <span id="cam-v">CHASE</span></div>
-  <div id="inv-w"><div id="inv-v"></div><div id="inv-tip" class="inv-tip">ON FOOT: 1-5 switch weapons | E enter or exit vehicles</div></div>
+  <div id="inv-w"><div id="inv-v"></div><div id="inv-tip" class="inv-tip">ON FOOT: 1-6 switch weapons | E enter or exit vehicles</div></div>
   <div id="kl-w"><div id="kl-l">KILLS</div><div id="kl-v">0</div><div id="kl-r">7 remaining</div></div>
   <canvas id="mm" width="130" height="130"></canvas>
+  <div id="chat-w">
+    <div id="chat-log"></div>
+    <div id="chat-row">
+      <input id="chat-in" type="text" maxlength="80" placeholder="Chat..." aria-label="Chat message">
+      <button id="chat-send" type="button">SEND</button>
+    </div>
+  </div>
 </div>
 <div id="menu" class="menu">
   <h1>TANK WARFARE</h1><p id="subTxt" class="sub">Destroy enemy tanks to win</p>
@@ -113,6 +138,25 @@
       <option value="italy">Italy</option>
     </select>
   </div>
+  <div class="mapPick">
+    <label for="skinSel">SKIN</label>
+    <select id="skinSel">
+      <option value="forest">Forest</option>
+      <option value="desert">Desert</option>
+      <option value="blue">Blue</option>
+      <option value="urban">Urban</option>
+      <option value="custom">Custom</option>
+    </select>
+    <input id="skinColor" type="color" value="#8fd1ff" aria-label="Custom skin color">
+  </div>
+  <div class="mapPick">
+    <label>UPGRADES</label>
+    <div id="upgBtns">
+      <button class="upgBtn" data-upg="armor" type="button">ARMOR</button>
+      <button class="upgBtn" data-upg="speed" type="button">ENGINE</button>
+      <button class="upgBtn" data-upg="fire" type="button">WEAPON</button>
+    </div>
+  </div>
   <p id="modeDesc">1v1 duel mode: one enemy ace tank.</p>
   <p id="lanInfo"></p>
   <div class="cbox">
@@ -137,6 +181,7 @@
     <button class="use" id="mbUse" type="button">USE</button>
     <button class="veh1" id="mbHeli" type="button">HELI</button>
     <button class="veh2" id="mbJet" type="button">JET</button>
+    <button class="land" id="mbLand" type="button">LAND</button>
     <button class="cam" id="mbCam" type="button">CAMERA</button>
   </div>
 </div>
@@ -231,7 +276,10 @@ const klV=document.getElementById('kl-v'),klR=document.getElementById('kl-r');
 const spdV=document.getElementById('spd-v');
 const mdV=document.getElementById('md-v');
 const camV=document.getElementById('cam-v');
+const airAimEl=document.getElementById('airAim');
 const invW=document.getElementById('inv-w'),invV=document.getElementById('inv-v'),invTip=document.getElementById('inv-tip');
+const chatLogEl=document.getElementById('chat-log'),chatInputEl=document.getElementById('chat-in'),chatSendEl=document.getElementById('chat-send');
+const skinSelEl=document.getElementById('skinSel'),skinColorEl=document.getElementById('skinColor');
 const hudEl=document.getElementById('hud'),menuEl=document.getElementById('menu');
 const overEl=document.getElementById('over'),rtEl=document.getElementById('rt'),rsEl=document.getElementById('rs');
 const dmgEl=document.getElementById('dmg'),mmC=document.getElementById('mm'),mmX=mmC.getContext('2d');
@@ -239,9 +287,10 @@ const lanInfoEl=document.getElementById('lanInfo');
 const mobileCtlEl=document.getElementById('mobileCtl');
 const mbFire=document.getElementById('mbFire'),mbJump=document.getElementById('mbJump');
 const mbUse=document.getElementById('mbUse'),mbHeli=document.getElementById('mbHeli'),mbJet=document.getElementById('mbJet');
-const mbCam=document.getElementById('mbCam');
+const mbLand=document.getElementById('mbLand'),mbCam=document.getElementById('mbCam');
 const mapSelEl=document.getElementById('mapSel');
 const modeBtns=[...document.querySelectorAll('.mBtn')],modeDescEl=document.getElementById('modeDesc');
+const upgradeBtns=[...document.querySelectorAll('.upgBtn')];
 const subTxtEl=document.getElementById('subTxt');
 const modeText={
   '1v1':'1v1 duel mode: one enemy ace tank.',
@@ -259,6 +308,10 @@ const modeSubText={
 };
 let selectedMode='1v1';
 let selectedMap='london';
+const skinPresets={forest:'#7cc96a',desert:'#d8b56a',blue:'#76b9ff',urban:'#a8b0b8'};
+let selectedSkin=localStorage.getItem('tw-skin')||'forest';
+let selectedSkinCustom=localStorage.getItem('tw-skin-custom')||'#8fd1ff';
+let selectedUpgrades=(()=>{try{return JSON.parse(localStorage.getItem('tw-upgrades')||'{"armor":false,"speed":false,"fire":false}');}catch{return {armor:false,speed:false,fire:false};}})();
 let lastStartedMode='1v1';
 const mapThemes={
   london:{sky:0xc4ddf2,fog:0xdde8ef,fogD:0.0055,sun:0xfff0c9,sunI:1.45,ground:0x626d73,road:0x2a2e34,lane:0xe6ddb9,bld:0x9a8f86,accent:0xc23f3f,park:0x5f8051},
@@ -274,6 +327,55 @@ const mapThemes={
   italy:{sky:0xcde0f0,fog:0xe1ebf2,fogD:0.0052,sun:0xffefc5,sunI:1.63,ground:0x8f8574,road:0x373432,lane:0xf0ddb4,bld:0xc8b299,accent:0x9d4d3a,park:0x628558}
 };
 function isLANMode(m=selectedMode){return String(m||'').startsWith('lan');}
+function getSkinColor(){return selectedSkin==='custom'?(selectedSkinCustom||'#8fd1ff'):(skinPresets[selectedSkin]||skinPresets.forest);}
+function syncSkinControls(){
+  if(skinSelEl)skinSelEl.value=selectedSkin;
+  if(skinColorEl)skinColorEl.value=selectedSkinCustom;
+}
+function syncUpgradeControls(){upgradeBtns.forEach(b=>b.classList.toggle('on',!!selectedUpgrades[b.dataset.upg]));}
+function toggleUpgrade(key){
+  selectedUpgrades={...selectedUpgrades,[key]:!selectedUpgrades[key]};
+  localStorage.setItem('tw-upgrades',JSON.stringify(selectedUpgrades));
+  syncUpgradeControls();
+}
+function applyPilotSkin(pilot){
+  if(!pilot||!pilot.children.length)return;
+  const tone=new THREE.Color(getSkinColor());
+  pilot.children.forEach((c,i)=>{if(c.isMesh&&c.material&&c.material.color){c.material.color.set(i===0?tone:tone.clone().offsetHSL(0,.02,.06));}});
+}
+function applyPlayerUpgrades(ent){
+  if(!ent||!ent.userData)return;
+  const u=ent.userData;
+  const armor=selectedUpgrades.armor?1.18:1;
+  const speed=selectedUpgrades.speed?1.14:1;
+  const fire=selectedUpgrades.fire?0.86:1;
+  if(u.kind==='tank'){
+    u.maxHp=Math.round(100*armor);
+    u.hp=Math.min(u.hp||u.maxHp,u.maxHp);
+    u.maxSpeed=28*speed;
+    u.accel=35*speed;
+    u.reloadMax=0.55*fire;
+  }else if(u.kind==='pilot'){
+    u.maxHp=Math.round(70*armor);
+    u.hp=Math.min(u.hp||u.maxHp,u.maxHp);
+    u.maxSpeed=16*speed;
+    u.accel=55*speed;
+    u.jumpForce=6.8*speed;
+    u.reloadMax=Math.max(0.12,getWeapon().reload*fire);
+  }else if(u.kind==='heli'){
+    u.maxHp=Math.round(110*armor);
+    u.hp=Math.min(u.hp||u.maxHp,u.maxHp);
+    u.maxSpeed=32*speed;
+    u.accel=18*speed;
+    u.reloadMax=0.32*fire;
+  }else if(u.kind==='jet'){
+    u.maxHp=Math.round(90*armor);
+    u.hp=Math.min(u.hp||u.maxHp,u.maxHp);
+    u.maxSpeed=58*speed;
+    u.accel=22*speed;
+    u.reloadMax=0.18*fire;
+  }
+}
 function setObjectiveText(mode=selectedMode){
   if(!objEl)return;
   const location=selectedMap.charAt(0).toUpperCase()+selectedMap.slice(1);
@@ -307,7 +409,7 @@ function cycleCameraMode(){camMode=(camMode+1)%camModes.length;setCamLabel();}
 scene.add(gameGrp);
 const keys={},mouse=new THREE.Vector2();
 let engT=0,shootQ=false;
-let actDown=false,jumpQ=false,useQ=false;
+let actDown=false,jumpQ=false,useQ=false,landQ=false,landingActive=false;
 let useCooldown=0;
 let worldEpoch=0;
 const loopSfx={rotorOsc:null,rotorGain:null,jetOsc:null,jetGain:null};
@@ -324,7 +426,7 @@ const clock=new THREE.Clock(false);
 function getWeapon(){return inventory[weaponIdx]||inventory[0];}
 function setWeaponByIndex(i){
   weaponIdx=((i%inventory.length)+inventory.length)%inventory.length;
-  if(player&&player.userData&&player.userData.kind==='pilot')player.userData.reloadMax=getWeapon().reload;
+  if(player&&player.userData&&player.userData.kind==='pilot')player.userData.reloadMax=Math.max(0.12,getWeapon().reload*(selectedUpgrades.fire?0.86:1));
   updInventoryHUD();
 }
 function updInventoryHUD(){
@@ -397,9 +499,10 @@ function makeTank(x,z,isP,team=1){
 }
 function makePilot(x,z){
   const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.25,.7,6,10),new THREE.MeshStandardMaterial({color:0x6b7f5f,roughness:0.88,metalness:0.06}));
+  const skin=new THREE.Color(getSkinColor());
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.25,.7,6,10),new THREE.MeshStandardMaterial({color:skin,roughness:0.88,metalness:0.06}));
   body.position.y=.65;body.castShadow=true;g.add(body);
-  const head=new THREE.Mesh(new THREE.SphereGeometry(.22,10,10),new THREE.MeshStandardMaterial({color:0xc79b78,roughness:0.85}));
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.22,10,10),new THREE.MeshStandardMaterial({color:skin,roughness:0.85}));
   head.position.y=1.35;head.castShadow=true;g.add(head);
   g.position.set(x,0,z);
   g.userData={kind:'pilot',isP:true,team:0,hp:70,maxHp:70,facing:0,turretRot:0,turretFacingGoal:0,reloadT:0,reloadMax:0.2,alive:true,
@@ -410,22 +513,50 @@ function makePilot(x,z){
 function makeAircraft(kind,x,z){
   const g=new THREE.Group();
   const isJet=kind==='jet';
-  const bodyMat=new THREE.MeshStandardMaterial({color:isJet?0x6f7f8e:0x6f8c94,roughness:.55,metalness:.38});
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(isJet?.24:.35,isJet?.38:.45,isJet?3.7:3.2,12),bodyMat);
-  body.rotation.x=Math.PI/2;body.position.y=isJet?2.2:2.8;body.castShadow=true;g.add(body);
-  const nose=new THREE.Mesh(new THREE.ConeGeometry(isJet?.22:.27,isJet?1.1:.8,12),bodyMat);
-  nose.rotation.x=Math.PI/2;nose.position.set(0,isJet?2.2:2.8,-(isJet?2.3:1.95));nose.castShadow=true;g.add(nose);
-  const wing=new THREE.Mesh(new THREE.BoxGeometry(isJet?3.6:2.1,.12,isJet?.85:1.35),bodyMat);
-  wing.position.set(0,isJet?2.1:2.75,-.1);wing.castShadow=true;g.add(wing);
+  const bodyMat=new THREE.MeshStandardMaterial({color:isJet?0x73808c:0x6a7f86,roughness:.5,metalness:.45});
+  const darkMat=new THREE.MeshStandardMaterial({color:0x1f2328,roughness:.7,metalness:.35});
+  const glassMat=new THREE.MeshStandardMaterial({color:0x9fc0d4,roughness:.18,metalness:.12,transparent:true,opacity:.82});
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(isJet?.28:.34,isJet?.4:.42,isJet?4.5:3.6,12),bodyMat);
+  body.rotation.x=Math.PI/2;body.position.y=isJet?2.15:2.82;body.castShadow=true;g.add(body);
+  const nose=new THREE.Mesh(new THREE.ConeGeometry(isJet?.2:.26,isJet?1.5:.95,12),bodyMat);
+  nose.rotation.x=Math.PI/2;nose.position.set(0,isJet?2.15:2.82,-(isJet?2.85:2.15));nose.castShadow=true;g.add(nose);
+  const canopy=new THREE.Mesh(new THREE.SphereGeometry(isJet?.34:.42,12,10,0,Math.PI*2,0,Math.PI/2),glassMat);
+  canopy.scale.set(1,1.2,isJet?.9:1.05);canopy.rotation.y=Math.PI/2;canopy.position.set(0,isJet?2.42:3.0,isJet?-.28:-.2);canopy.castShadow=true;g.add(canopy);
+  const wing=new THREE.Mesh(new THREE.BoxGeometry(isJet?4.4:2.2,.12,isJet?.95:1.45),bodyMat);
+  wing.position.set(0,isJet?2.08:2.78,-.05);wing.castShadow=true;g.add(wing);
   if(!isJet){
-    const rotor=new THREE.Mesh(new THREE.BoxGeometry(3.2,.05,.12),new THREE.MeshStandardMaterial({color:0x1b1d1f,roughness:.4,metalness:.65}));
-    rotor.position.set(0,3.35,-.1);rotor.userData.rotor=true;g.add(rotor);
-    const tailRotor=new THREE.Mesh(new THREE.BoxGeometry(.08,.65,.08),new THREE.MeshStandardMaterial({color:0x1b1d1f,roughness:.4,metalness:.65}));
-    tailRotor.position.set(0.95,2.72,1.38);tailRotor.userData.rotor=true;g.add(tailRotor);
+    const mast=new THREE.Mesh(new THREE.CylinderGeometry(.05,.07,.7,8),darkMat);
+    mast.position.set(0,3.28,-.04);mast.castShadow=true;g.add(mast);
+    const rotorHub=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.1,10),darkMat);
+    rotorHub.position.set(0,3.62,-.04);rotorHub.castShadow=true;g.add(rotorHub);
+    const bladeGeo=new THREE.BoxGeometry(3.85,.06,.14);
+    const rotorA=new THREE.Mesh(bladeGeo,darkMat);rotorA.position.set(0,3.67,-.04);rotorA.userData.rotor=true;g.add(rotorA);
+    const rotorB=rotorA.clone();rotorB.rotation.y=Math.PI/2;g.add(rotorB);
+    const tailBoom=new THREE.Mesh(new THREE.BoxGeometry(2.35,.18,.18),bodyMat);
+    tailBoom.position.set(0.95,2.83,1.62);tailBoom.rotation.z=-.03;tailBoom.castShadow=true;g.add(tailBoom);
+    const tailFin=new THREE.Mesh(new THREE.BoxGeometry(.18,.72,1.0),bodyMat);
+    tailFin.position.set(1.95,3.0,1.58);tailFin.castShadow=true;g.add(tailFin);
+    const tailRotor=new THREE.Mesh(new THREE.BoxGeometry(.08,.78,.08),darkMat);
+    tailRotor.position.set(2.03,2.96,1.86);tailRotor.userData.rotor=true;g.add(tailRotor);
+    const skidGeo=new THREE.BoxGeometry(2.7,.08,.08);
+    const skidL=new THREE.Mesh(skidGeo,darkMat);skidL.position.set(-.32,1.95,.2);skidL.rotation.z=.14;skidL.castShadow=true;g.add(skidL);
+    const skidR=skidL.clone();skidR.position.x=.32;skidR.rotation.z=-.14;g.add(skidR);
+  }
+  if(isJet){
+    const noseIntake=new THREE.Mesh(new THREE.CylinderGeometry(.2,.26,.25,10),darkMat);
+    noseIntake.rotation.x=Math.PI/2;noseIntake.position.set(0,2.15,-1.65);noseIntake.castShadow=true;g.add(noseIntake);
+    const wingL=new THREE.Mesh(new THREE.BoxGeometry(2.4,.12,1.1),bodyMat);wingL.position.set(-1.0,2.0,-.2);wingL.rotation.z=.02;wingL.castShadow=true;g.add(wingL);
+    const wingR=wingL.clone();wingR.position.x=1.0;wingR.rotation.z=-.02;g.add(wingR);
+    const tailPlane=new THREE.Mesh(new THREE.BoxGeometry(1.1,.08,.75),bodyMat);tailPlane.position.set(0,2.28,1.55);tailPlane.castShadow=true;g.add(tailPlane);
+    const fin=new THREE.Mesh(new THREE.BoxGeometry(.18,.88,.9),bodyMat);fin.position.set(0,2.55,1.6);fin.castShadow=true;g.add(fin);
+    const engineNozzle=new THREE.Mesh(new THREE.CylinderGeometry(.18,.24,.4,10),darkMat);engineNozzle.rotation.x=Math.PI/2;engineNozzle.position.set(0,2.15,2.26);engineNozzle.castShadow=true;g.add(engineNozzle);
+    const gearL=new THREE.Mesh(new THREE.BoxGeometry(.1,.55,.1),darkMat);gearL.position.set(-.75,1.72,.15);gearL.castShadow=true;g.add(gearL);
+    const gearR=gearL.clone();gearR.position.x=.75;g.add(gearR);
+    const gearN=new THREE.Mesh(new THREE.BoxGeometry(.08,.42,.08),darkMat);gearN.position.set(0,1.74,-.88);gearN.castShadow=true;g.add(gearN);
   }
   g.position.set(x,0,z);
   g.userData={kind,isP:true,team:0,hp:isJet?90:110,maxHp:isJet?90:110,facing:0,turretRot:0,turretFacingGoal:0,reloadT:0,reloadMax:isJet?0.18:0.32,alive:true,
-    vel:new THREE.Vector3(),speed:0,maxSpeed:isJet?58:32,accel:isJet?22:18,brakeDrag:4,turretRotSpd:0,altitude:isJet?2.2:2.8};
+    vel:new THREE.Vector3(),speed:0,maxSpeed:isJet?58:32,accel:isJet?22:18,brakeDrag:4,turretRotSpd:0,altitude:isJet?2.2:2.8,bank:0,pitch:0};
   gameGrp.add(g);
   return g;
 }
@@ -524,6 +655,32 @@ function tryUse(){
   if(near===playerHeli){playerPilot.visible=false;useCooldown=.22;setPlayerEntity(playerHeli,'heli');return;}
   if(near===playerJet){playerPilot.visible=false;useCooldown=.22;setPlayerEntity(playerJet,'jet');return;}
 }
+function tryLandAircraft(){
+  if(state!=='playing'||isLANMode()||!player||!player.userData)return;
+  const kind=player.userData.kind;
+  if(kind!=='heli'&&kind!=='jet')return;
+  const u=player.userData;
+  u.speed=Math.max(0,u.speed-10);
+  const targetAlt=kind==='heli'?1.85:1.65;
+  u.altitude+=(targetAlt-u.altitude)*.12;
+  player.position.y=u.altitude;
+  player.rotation.z*=.9;
+  player.rotation.x*=.9;
+  if(Math.abs(u.altitude-targetAlt)<.08&&u.speed<3){
+    u.altitude=targetAlt;
+    player.position.y=targetAlt;
+    u.bank*=.7;
+    u.pitch*=.7;
+    landingActive=false;
+    if(playerPilot&&playerPilot.userData.alive){
+      playerPilot.visible=true;
+      playerPilot.position.copy(player.position).add(new THREE.Vector3(1.1,0,1.1));
+      setPlayerEntity(playerPilot,'onfoot');
+    }
+    return true;
+  }
+  return false;
+}
 function mkObs(x,z,w,h,d,m){
   const grp=new THREE.Group();
   const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);
@@ -602,7 +759,7 @@ function makePedestrian(x,z,axis='x'){
   const head=new THREE.Mesh(new THREE.SphereGeometry(.14,8,8),new THREE.MeshStandardMaterial({color:0xc79b78,roughness:0.84}));
   head.position.y=1.02;head.castShadow=true;g.add(head);
   g.position.set(x,0,z);gameGrp.add(g);
-  cityFx.peds.push({mesh:g,axis,speed:.7+Math.random()*0.7,dir:Math.random()>.5?1:-1,phase:Math.random()*Math.PI*2,base:new THREE.Vector3(x,0,z),span:4+Math.random()*5});
+  cityFx.peds.push({mesh:g,axis,speed:.32+Math.random()*0.22,dir:Math.random()>.5?1:-1,phase:Math.random()*Math.PI*2,base:new THREE.Vector3(x,0,z),span:4+Math.random()*5});
 }
 function makeTrainLine(){
   const railMat=new THREE.MeshStandardMaterial({color:0x55585f,roughness:0.82,metalness:0.2});
@@ -672,7 +829,7 @@ function updCityLife(dt){
     else{c.mesh.position.z+=c.speed*dt;if(c.mesh.position.z>114)c.mesh.position.z=-114;if(c.mesh.position.z<-114)c.mesh.position.z=114;}
   }
   for(const p of cityFx.peds){
-    p.phase+=dt*(2.4+p.speed);
+    p.phase+=dt*(1.15+p.speed*0.8);
     const offset=Math.sin(p.phase)*p.span*p.dir;
     if(p.axis==='x'){p.mesh.position.x=p.base.x+offset;p.mesh.position.z=p.base.z+Math.cos(p.phase*0.5)*.3;p.mesh.rotation.y=offset>0?-Math.PI/2:Math.PI/2;}
     else{p.mesh.position.z=p.base.z+offset;p.mesh.position.x=p.base.x+Math.cos(p.phase*0.5)*.3;p.mesh.rotation.y=offset>0?Math.PI:0;}
@@ -860,10 +1017,18 @@ function fireShell(tank,fromNet=false,netVx=0,netVz=0){
     return;
   }
   const spawnShell=(aOff=0,dmgOverride=null)=>{
-    const dir=new THREE.Vector3(-Math.sin(angle+aOff),0,-Math.cos(angle+aOff));
+    let dir=new THREE.Vector3(-Math.sin(angle+aOff),0,-Math.cos(angle+aOff));
     const pos=tank.position.clone();
     pos.y=kind==='pilot'?1.3:(kind==='heli'?3.0:(kind==='jet'?2.5:1.45));
     pos.addScaledVector(dir,kind==='pilot'?1.1:(kind==='tank'?2.9:2.2));
+    if((kind==='heli'||kind==='jet')&&tank===player&&!fromNet){
+      const aim=worldAim();
+      if(aim&&Number.isFinite(aim.x)){
+        const aimDir=aim.clone().sub(pos);
+        aimDir.y=0;
+        if(aimDir.lengthSq()>0.0001)dir=aimDir.normalize();
+      }
+    }
     const mesh=new THREE.Mesh(new THREE.SphereGeometry(wp?0.1:0.16,6,6),mat.sh);mesh.position.copy(pos);gameGrp.add(mesh);
     const initVel=kind==='pilot'?(wp?wp.speed:95):(kind==='jet'?120:(kind==='heli'?90:82));
     const vel=(fromNet&&netVx&&netVz)?new THREE.Vector3(netVx,0,netVz):dir.clone().multiplyScalar(initVel);
@@ -958,6 +1123,40 @@ function wsURL(){return (location.protocol==='https:'?'wss://':'ws://')+location
 function netSetInfo(msg){if(lanInfoEl)lanInfoEl.textContent=msg;}
 function netClose(){if(netSock){try{netSock.close();}catch{}netSock=null;}netSeat=0;netPeerReady=false;}
 function netSend(obj){if(netSock&&netSock.readyState===1)netSock.send(JSON.stringify(obj));}
+function addChatMessage(name,text){
+  if(!chatLogEl)return;
+  const row=document.createElement('div');
+  row.className='chat-msg';
+  row.innerHTML=`<span class="chat-meta">${name}</span>${String(text).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}`;
+  chatLogEl.appendChild(row);
+  while(chatLogEl.children.length>6)chatLogEl.removeChild(chatLogEl.firstChild);
+  chatLogEl.scrollTop=chatLogEl.scrollHeight;
+}
+function botReplyFor(text){
+  const msg=String(text||'').toLowerCase();
+  if(msg.includes('hello')||msg.includes('hi'))return 'Hello. Ready when you are.';
+  if(msg.includes('help'))return 'Stay low, use cover, and aim carefully.';
+  if(msg.includes('where'))return 'Check the map and follow the roads.';
+  if(msg.includes('attack')||msg.includes('fire'))return 'Roger. Moving in now.';
+  if(msg.includes('thanks'))return 'Anytime.';
+  if(msg.includes('aim'))return 'Use the reticle and lead the target.';
+  return ['Understood.','Copy that.','On it.','Good call.'][Math.floor(Math.random()*4)];
+}
+function maybeBotReply(text){
+  if(isLANMode()&&netPeerReady)return;
+  const delay=500+Math.random()*700;
+  setTimeout(()=>addChatMessage('BOT',botReplyFor(text)),delay);
+}
+function sendChatMessage(){
+  if(!chatInputEl)return;
+  const raw=chatInputEl.value.trim();
+  if(!raw)return;
+  const who=player&&player===playerTank&&isLANMode()?'TANK':'YOU';
+  addChatMessage(who,raw);
+  if(isLANMode())netSend({type:'chat',text:raw});
+  else maybeBotReply(raw);
+  chatInputEl.value='';
+}
 function connectLAN(){
   return new Promise((resolve,reject)=>{
     netClose();
@@ -989,6 +1188,7 @@ function connectLAN(){
         }
       }
       if(m.type==='fire'&&lanOpponent&&lanOpponent.userData.alive){fireShell(lanOpponent,true,m.vx,m.vz);}
+      if(m.type==='chat'){addChatMessage(m.seat===2?'P2':'P1',m.text||'');}
     };
   });
 }
@@ -1005,6 +1205,7 @@ function initGame(startMode=selectedMode){
     const px=netSeat===2?35:-35,ox=netSeat===2?-35:35;
     playerTank=makeTank(px,0,true,0);
     player=playerTank;
+    applyPlayerUpgrades(playerTank);
     player.userData.facing=netSeat===2?Math.PI/2:-Math.PI/2;
     player.rotation.y=player.userData.facing;
     lanOpponent=makeTank(ox,0,false,1);
@@ -1030,6 +1231,10 @@ function initGame(startMode=selectedMode){
     playerHeli=makeAircraft('heli',-20,30);
     playerJet=makeAircraft('jet',22,30);
     player=playerTank;
+    applyPlayerUpgrades(playerTank);
+    if(playerPilot)applyPlayerUpgrades(playerPilot);
+    if(playerHeli)applyPlayerUpgrades(playerHeli);
+    if(playerJet)applyPlayerUpgrades(playerJet);
     setupMode(startMode);
     klR.textContent=enemies.length+' remaining';
   }
@@ -1084,6 +1289,25 @@ function updPlayer(dt){
     playerYVel-=15*dt;player.position.y=Math.max(0,player.position.y+playerYVel*dt);if(player.position.y===0)playerYVel=0;
   }else{
     const isJet=kind==='jet';
+    if(landingActive&&(kind==='heli'||kind==='jet')){
+      tryLandAircraft();
+      for(const c of player.children)if(c.userData&&c.userData.rotor)c.rotation.y+=18*dt;
+      if(airAimEl)airAimEl.classList.toggle('on',false);
+      camKick=Math.max(0,camKick-dt*1.9);
+      if(u.reloadT>0){u.reloadT=Math.max(0,u.reloadT-dt);rlF.style.width=Math.min(100,(1-u.reloadT/u.reloadMax)*100)+'%';rlT.textContent='RELOADING';}
+      else{rlF.style.width='100%';rlT.textContent='READY';}
+      spdV.textContent=Math.round(Math.abs(u.speed||0))+'km/h';
+      let cp=player.position.clone();
+      const fwd=new THREE.Vector3(-Math.sin(u.facing),0,-Math.cos(u.facing));
+      let lookPt=player.position.clone().addScaledVector(fwd,30);
+      const camH=kind==='jet'?5.2:4.6;
+      const camBack=kind==='jet'?8.5:7.2;
+      cp=player.position.clone().add(new THREE.Vector3(0,camH+camKick*0.15,0)).addScaledVector(fwd,camBack-camKick*0.3);
+      camera.position.lerp(cp,.09);
+      camera.lookAt(lookPt.x,lookPt.y-camKick*0.12,lookPt.z);
+      if(isLANMode()&&state==='playing'&&kind==='tank'){netLastSend-=dt;if(netLastSend<=0){netSend({type:'state',x:player.position.x,z:player.position.z,facing:u.facing,turret:u.turretRot,speed:u.speed,hp:u.hp,alive:u.alive});netLastSend=.05;}}
+      return;
+    }
     let thrust=0;
     if(isUp)thrust=1;
     if(isDown)thrust=-0.7;
@@ -1097,6 +1321,15 @@ function updPlayer(dt){
     const np=player.position.clone().add(move);
     np.clamp(new THREE.Vector3(-115,u.altitude,-115),new THREE.Vector3(115,u.altitude,115));
     player.position.copy(np);player.position.y=u.altitude;
+    if(kind==='heli'||kind==='jet'){
+      const turnInput=(isLeft?1:0)-(isRight?1:0);
+      const bankGoal=turnInput*(kind==='jet'?-0.42:-0.28);
+      const pitchGoal=(isDown?0.08:(isUp?-0.04:0))+(kind==='jet'?THREE.MathUtils.clamp((u.speed-(isJet?22:16))/48,-0.08,0.06):0);
+      u.bank=(u.bank||0)+(bankGoal-(u.bank||0))*Math.min(1,dt*4.5);
+      u.pitch=(u.pitch||0)+(pitchGoal-(u.pitch||0))*Math.min(1,dt*3.8);
+      player.rotation.z=u.bank;
+      player.rotation.x=u.pitch;
+    }
     for(const c of player.children)if(c.userData&&c.userData.rotor)c.rotation.y+=18*dt;
   }
 
@@ -1105,6 +1338,8 @@ function updPlayer(dt){
   spdV.textContent=Math.round(Math.abs(u.speed||0))+'km/h';
   if((shootQ||actDown)&&(kind==='tank'||kind==='pilot'||kind==='heli'||kind==='jet')){fireShell(player);shootQ=false;}
   if(useQ){tryUse();useQ=false;}
+  if(landQ){tryLandAircraft();landQ=false;}
+  if(airAimEl)airAimEl.classList.toggle('on',kind==='heli'||kind==='jet');
   camKick=Math.max(0,camKick-dt*1.9);
   let cp=player.position.clone();
   let lookPt=player.position.clone().addScaledVector(fwd,30);
@@ -1186,10 +1421,16 @@ function animate(){
 addEventListener('mousemove',e=>{mouse.x=(e.clientX/innerWidth)*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;});
 addEventListener('mousedown',e=>{if(e.button===0&&state==='playing'){actx.resume().catch(()=>{});shootQ=true;}});
 addEventListener('keydown',e=>{
+  if(document.activeElement===chatInputEl){
+    if(e.key==='Escape'){chatInputEl.blur();e.preventDefault();}
+    else if(e.key!=='Enter')return;
+  }
   keys[e.key]=true;
   if(e.repeat&&('123456ceCE'.includes(e.key)))return;
+  if(state==='playing'&&e.key==='/'&&chatInputEl){e.preventDefault();chatInputEl.focus();return;}
   if(state==='playing'&&e.key===' '){e.preventDefault();if(controlMode==='onfoot')jumpQ=true;else{actx.resume().catch(()=>{});shootQ=true;}}
   if(state==='playing'&&(e.key==='c'||e.key==='C'))cycleCameraMode();
+  if(state==='playing'&&(e.key==='l'||e.key==='L')){if(player&&player.userData&&((player.userData.kind==='heli')||(player.userData.kind==='jet'))) {landingActive=true;landQ=true;} }
   if(state==='playing'&&controlMode==='onfoot'){
     if(e.key==='1')setWeaponByIndex(0);
     if(e.key==='2')setWeaponByIndex(1);
@@ -1219,6 +1460,7 @@ if(mbJump)mbJump.addEventListener('pointerdown',e=>{e.preventDefault();jumpQ=tru
 if(mbUse)mbUse.addEventListener('pointerdown',e=>{e.preventDefault();useQ=true;});
 if(mbHeli)mbHeli.addEventListener('pointerdown',e=>{e.preventDefault();forceEnterVehicle(playerHeli,'heli');});
 if(mbJet)mbJet.addEventListener('pointerdown',e=>{e.preventDefault();forceEnterVehicle(playerJet,'jet');});
+if(mbLand)mbLand.addEventListener('pointerdown',e=>{e.preventDefault();if(player&&player.userData&&((player.userData.kind==='heli')||(player.userData.kind==='jet'))){landingActive=true;landQ=true;}});
 if(mbCam)mbCam.addEventListener('pointerdown',e=>{e.preventDefault();cycleCameraMode();});
 document.getElementById('sBtn').addEventListener('click',async()=>{
   try{
@@ -1241,6 +1483,29 @@ if(mapSelEl){
   selectedMap=mapSelEl.value||'london';
   if(subTxtEl){const nm=selectedMap.charAt(0).toUpperCase()+selectedMap.slice(1);subTxtEl.textContent=`Battlefield: ${nm} | ${modeSubText[selectedMode]||modeSubText['1v1']}`;}
   mapSelEl.addEventListener('change',()=>{selectedMap=mapSelEl.value||'london';if(subTxtEl){const nm=selectedMap.charAt(0).toUpperCase()+selectedMap.slice(1);subTxtEl.textContent=`Battlefield: ${nm} | ${modeSubText[selectedMode]||modeSubText['1v1']}`;}setObjectiveText(selectedMode);});
+}
+syncSkinControls();
+if(skinSelEl){
+  skinSelEl.addEventListener('change',()=>{
+    selectedSkin=skinSelEl.value||'forest';
+    localStorage.setItem('tw-skin',selectedSkin);
+    if(skinColorEl)skinColorEl.disabled=selectedSkin!=='custom';
+    if(playerPilot)applyPilotSkin(playerPilot);
+  });
+}
+if(skinColorEl){
+  skinColorEl.disabled=selectedSkin!=='custom';
+  skinColorEl.addEventListener('input',()=>{
+    selectedSkinCustom=skinColorEl.value||'#8fd1ff';
+    localStorage.setItem('tw-skin-custom',selectedSkinCustom);
+    if(selectedSkin==='custom'&&playerPilot)applyPilotSkin(playerPilot);
+  });
+}
+syncUpgradeControls();
+upgradeBtns.forEach(b=>b.addEventListener('click',()=>toggleUpgrade(b.dataset.upg||'')));
+if(chatSendEl)chatSendEl.addEventListener('click',()=>sendChatMessage());
+if(chatInputEl){
+  chatInputEl.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendChatMessage();}else if(e.key==='Escape'){chatInputEl.blur();}});
 }
 modeBtns.forEach(b=>b.addEventListener('click',()=>{
   selectedMode=b.dataset.mode||'1v1';

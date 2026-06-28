@@ -109,6 +109,15 @@ wss.on('connection', (ws) => {
         vx: Number(msg.vx) || 0,
         vz: Number(msg.vz) || 0
       });
+      return;
+    }
+
+    if (msg.type === 'chat') {
+      send(peer, {
+        type: 'chat',
+        seat: ws._seat,
+        text: String(msg.text || '').slice(0, 80)
+      });
     }
   });
 
